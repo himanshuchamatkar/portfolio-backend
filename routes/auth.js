@@ -29,12 +29,30 @@ router.post('/login', async (req, res) => {
 // Register (first time setup)
 router.post('/register', async (req, res) => {
   try {
-    const existing = await Admin.find()
-    if (existing.length > 0) return res.status(400).json({ error: 'Admin already exists' })
+    const { username, email, password } = req.body
+    
+    const existing = await Admin.findOne({ email })
+    if (existing) return res.status(400).json({ error: 'Admin already exists' })
 
-    const admin = new Admin(req.body)
+    const admin = new Admin({ username, email, password })
     await admin.save()
     res.json({ message: 'Admin created successfully' })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Setup admin (one-time, no auth required)
+router.post('/setup', async (req, res) => {
+  try {
+    const { username, email, password } = req.body
+    
+    const existing = await Admin.findOne({ email })
+    if (existing) return res.json({ message: 'Admin already exists' })
+
+    const admin = new Admin({ username, email, password })
+    await admin.save()
+    res.json({ message: 'Admin created successfully!', success: true })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
