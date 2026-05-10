@@ -2,9 +2,6 @@ import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import multer from 'multer'
-import path from 'path'
-import fs from 'fs'
 import contactRoutes from './routes/contact.js'
 import projectRoutes from './routes/projects.js'
 import skillRoutes from './routes/skills.js'
@@ -15,43 +12,12 @@ import leadershipRoutes from './routes/leadership.js'
 
 dotenv.config()
 
-// Create uploads directory if it doesn't exist
-if (!fs.existsSync('uploads')) {
-  fs.mkdirSync('uploads')
-}
-
 const app = express()
 const PORT = process.env.PORT || 5000
 
 // Middleware
 app.use(cors())
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-// Serve uploaded images
-app.use('/uploads', express.static('uploads'))
-
-// Multer setup for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/')
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname))
-  }
-})
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } }) // 5MB limit
-
-// Upload endpoint
-app.post('/api/upload', upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' })
-  }
-  res.json({ 
-    url: `/uploads/${req.file.filename}`,
-    filename: req.file.filename
-  })
-})
 
 // Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || `mongodb+srv://himanshu:himan2005@cluster0.mongodb.net/portfolio?retryWrites=true&w=majority`
