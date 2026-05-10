@@ -14,6 +14,24 @@ router.get('/', async (req, res) => {
   }
 })
 
+// Upload image as base64
+router.post('/upload', auth, async (req, res) => {
+  try {
+    const { image, name } = req.body
+    if (!image) return res.status(400).json({ error: 'No image provided' })
+    
+    const item = new Gallery({
+      name: name || 'Gallery Image',
+      imageUrl: image,
+      order: 0
+    })
+    await item.save()
+    res.status(201).json(item)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
 // Get all (admin)
 router.get('/all', auth, async (req, res) => {
   try {
