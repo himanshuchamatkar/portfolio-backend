@@ -62,6 +62,25 @@ router.get('/setup', async (req, res) => {
   }
 })
 
+// Change password
+router.post('/change-password', async (req, res) => {
+  try {
+    const { email, currentPassword, newPassword } = req.body
+    
+    const admin = await Admin.findOne({ email })
+    if (!admin) return res.status(400).json({ error: 'Admin not found' })
+
+    const isMatch = await admin.comparePassword(currentPassword)
+    if (!isMatch) return res.status(400).json({ error: 'Current password is incorrect' })
+
+    admin.password = newPassword
+    await admin.save()
+    res.json({ message: 'Password changed successfully!' })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
 // Check auth
 router.get('/me', async (req, res) => {
   try {
