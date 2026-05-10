@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
 })
 
 // Setup admin (one-time, no auth required)
-router.post('/setup', async (req, res) => {
+router.get('/setup', async (req, res) => {
   try {
     const { username, email, password } = req.body
     
