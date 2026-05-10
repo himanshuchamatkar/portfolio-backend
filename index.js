@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import multer from 'multer'
 import path from 'path'
+import fs from 'fs'
 import contactRoutes from './routes/contact.js'
 import projectRoutes from './routes/projects.js'
 import skillRoutes from './routes/skills.js'
@@ -13,6 +14,11 @@ import certificationRoutes from './routes/certifications.js'
 import leadershipRoutes from './routes/leadership.js'
 
 dotenv.config()
+
+// Create uploads directory if it doesn't exist
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads')
+}
 
 const app = express()
 const PORT = process.env.PORT || 5000
