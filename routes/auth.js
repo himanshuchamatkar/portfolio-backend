@@ -45,7 +45,11 @@ router.post('/register', async (req, res) => {
 // Setup admin (one-time, no auth required)
 router.get('/setup', async (req, res) => {
   try {
-    const { username, email, password } = req.body
+    const { username, email, password } = req.query
+    
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Missing username, email, or password' })
+    }
     
     const existing = await Admin.findOne({ email })
     if (existing) return res.json({ message: 'Admin already exists' })
